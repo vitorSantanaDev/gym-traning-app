@@ -25,6 +25,7 @@ export function Button({
       <Text
         color={variant === "outline" ? "green.500" : "white"}
         fontFamily="heading"
+        fontWeight="bold"
         fontSize="sm"
       >
         {label}
