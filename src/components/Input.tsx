@@ -33,7 +33,7 @@ export function Input({
         placeholderTextColor="gray.300"
         {...restInputProps}
       />
-      <FormControl.ErrorMessage color="red.500">
+      <FormControl.ErrorMessage _text={{ color: "red.500" }}>
         {errorMessage}
       </FormControl.ErrorMessage>
     </FormControl>
