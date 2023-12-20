@@ -22,7 +22,7 @@ type AppRoutesProps = {
   history: undefined;
 };
 
-export type AuthNavgigatorRoutesProps = BottomTabNavigationProp<AppRoutesProps>;
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutesProps>;
 
 const { Navigator, Screen } = createBottomTabNavigator<AppRoutesProps>();
 

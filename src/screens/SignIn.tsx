@@ -4,13 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
-import { AuthNavgigatorRoutesProps } from "@routes/auth.routes";
+import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
 import Logo from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
 
 export function SignIn() {
-  const navigation = useNavigation<AuthNavgigatorRoutesProps>();
+  const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   function handleGotToSignUp() {
     navigation.navigate("signUp");
