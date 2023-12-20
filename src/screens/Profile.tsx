@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Alert, TouchableOpacity } from "react-native";
 import {
   Text,
   VStack,
@@ -6,8 +7,11 @@ import {
   Heading,
   Skeleton,
   ScrollView,
+  useToast,
 } from "native-base";
-import { TouchableOpacity } from "react-native";
+
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
@@ -17,7 +21,49 @@ import { ScreenHeader } from "@components/ScreenHeader";
 const PHOTO_SIZE = 33;
 
 export function Profile() {
-  const [photoIsLoading] = useState(false);
+  const [photoIsLoading, setPhotoIsLoading] = useState(false);
+
+  const [selectedPhoto, setSelectedPhoto] = useState<string>(
+    "https://github.com/vitorSantanaDev.png"
+  );
+
+  const toast = useToast();
+
+  async function handleUserPhotoSelect() {
+    try {
+      setPhotoIsLoading(true);
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      });
+
+      if (photoSelected.canceled) return;
+
+      const photoUri = photoSelected.assets[0].uri;
+
+      if (photoUri) {
+        const photoInfo = await FileSystem.getInfoAsync(photoUri);
+
+        if (photoInfo.exists && photoInfo.size / 1024 / 1024 > 5) {
+          toast.show({
+            title: "A foto selecionada deve ter no máximo 5MB",
+            placement: "top",
+            bgColor: "red.500",
+          });
+          return;
+        }
+
+        setSelectedPhoto(photoUri);
+      }
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      setPhotoIsLoading(false);
+    }
+  }
+
   return (
     <VStack flex={1}>
       <ScreenHeader title="Perfil" />
@@ -34,11 +80,11 @@ export function Profile() {
           ) : (
             <UserPhoto
               alt="Foto do usuário"
-              source={{ uri: "https://github.com/vitorSantanaDev.png" }}
+              source={{ uri: selectedPhoto }}
               size={PHOTO_SIZE}
             />
           )}
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleUserPhotoSelect}>
             <Text
               mb={8}
               mt={2}
