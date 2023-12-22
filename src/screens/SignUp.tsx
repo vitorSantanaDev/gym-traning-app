@@ -1,8 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
-import { VStack, Image, Text, Center, Heading, ScrollView } from "native-base";
+import {
+  VStack,
+  Image,
+  Text,
+  Center,
+  Heading,
+  ScrollView,
+  useToast,
+} from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
@@ -31,6 +42,7 @@ const signUpSchema = yup.object({
 });
 
 export function SignUp() {
+  const toast = useToast();
   const navigation = useNavigation();
 
   const {
@@ -43,13 +55,22 @@ export function SignUp() {
     navigation.goBack();
   }
 
-  function handleSignUp({
-    name,
-    email,
-    password,
-    password_confirmation,
-  }: FormFieldsProps) {
-    console.log({ name, email, password, password_confirmation });
+  async function handleSignUp({ name, email, password }: FormFieldsProps) {
+    try {
+      await api.post("/users", { name, email, password });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const message = isAppError
+        ? error.message
+        : "Ocorreu um erro ao tentar criar sua conta. Tente novamente mais tarde.";
+
+      toast.show({
+        title: message,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
   }
 
   return (
