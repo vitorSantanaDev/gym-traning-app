@@ -48,6 +48,7 @@ export function SignUp() {
   const {
     control,
     handleSubmit,
+    reset: resetForm,
     formState: { errors },
   } = useForm<FormFieldsProps>({ resolver: yupResolver(signUpSchema) });
 
@@ -58,6 +59,7 @@ export function SignUp() {
   async function handleSignUp({ name, email, password }: FormFieldsProps) {
     try {
       await api.post("/users", { name, email, password });
+      resetForm();
     } catch (error) {
       const isAppError = error instanceof AppError;
 
