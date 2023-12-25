@@ -1,4 +1,13 @@
-import { VStack, Image, Text, Center, Heading, ScrollView } from "native-base";
+import {
+  VStack,
+  Image,
+  Text,
+  Center,
+  Heading,
+  ScrollView,
+  useToast,
+} from "native-base";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,6 +16,8 @@ import * as yup from "yup";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
+import { AppError } from "@utils/AppError";
+import { useAuthContext } from "@contexts/auth/AuthContext";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
 import Logo from "@assets/logo.svg";
@@ -26,7 +37,11 @@ const signInFormSchema = yup.object({
 });
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
+  const toast = useToast();
+
+  const { signIn } = useAuthContext();
 
   const {
     control,
@@ -41,7 +56,19 @@ export function SignIn() {
   }
 
   async function handleSignIn({ email, password }: SignInFormFieldsProps) {
-    console.log({ email, password });
+    try {
+      setIsLoading(true);
+      await signIn({ email, password });
+    } catch (error) {
+      setIsLoading(false);
+      const isAppError = error instanceof AppError;
+
+      const errorMessage = isAppError
+        ? error.message
+        : "Erro ao realizar login, tente novamente mais tarde.";
+
+      toast.show({ title: errorMessage, placement: "top", bgColor: "red.500" });
+    }
   }
 
   return (
@@ -95,7 +122,11 @@ export function SignIn() {
               />
             )}
           />
-          <Button onPress={handleSubmit(handleSignIn)} label="Acessar" />
+          <Button
+            isLoading={isLoading}
+            onPress={handleSubmit(handleSignIn)}
+            label="Acessar"
+          />
         </Center>
         <Center mt={24}>
           <Text color="gray.100" mb={3} fontSize="sm" fontFamily="body">
