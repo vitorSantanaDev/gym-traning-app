@@ -8,12 +8,14 @@ import {
   ScrollView,
   useToast,
 } from "native-base";
-import { useForm, Controller } from "react-hook-form";
+import { useState } from "react";
+import { useForm, Controller, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
+import { useAuthContext } from "@contexts/auth/AuthContext";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
@@ -42,13 +44,16 @@ const signUpSchema = yup.object({
 });
 
 export function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const toast = useToast();
   const navigation = useNavigation();
+
+  const { signIn } = useAuthContext();
 
   const {
     control,
     handleSubmit,
-    reset: resetForm,
     formState: { errors },
   } = useForm<FormFieldsProps>({ resolver: yupResolver(signUpSchema) });
 
@@ -58,9 +63,11 @@ export function SignUp() {
 
   async function handleSignUp({ name, email, password }: FormFieldsProps) {
     try {
+      setIsLoading(true);
       await api.post("/users", { name, email, password });
-      resetForm();
+      await signIn({ email, password });
     } catch (error) {
+      setIsLoading(false);
       const isAppError = error instanceof AppError;
 
       const message = isAppError
@@ -157,6 +164,7 @@ export function SignUp() {
             )}
           />
           <Button
+            isLoading={isLoading}
             onPress={handleSubmit(handleSignUp)}
             label="Criar e acessar"
           />
