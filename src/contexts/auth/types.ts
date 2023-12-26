@@ -6,6 +6,8 @@ export type AuthContextProviderProps = {
 
 export type AuthContextStateType = {
   user: UserDTO;
+  loadingUserStorageData: boolean;
+  signOut(): Promise<void>;
   signIn({
     email,
     password,
