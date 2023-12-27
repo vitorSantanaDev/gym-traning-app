@@ -1,10 +1,14 @@
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { HStack, Heading, Image, Text, VStack, Icon } from "native-base";
 import { Entypo } from "@expo/vector-icons";
+import { ExerciseDto } from "@dtos/exercise.dto";
 
-type ExerciseCardProps = TouchableOpacityProps & {};
+import { api } from "@services/api";
+
+type ExerciseCardProps = TouchableOpacityProps & { data: ExerciseDto };
 
 export function ExerciseCard({
+  data,
   ...restTouchableOpacityProps
 }: ExerciseCardProps) {
   return (
@@ -23,17 +27,17 @@ export function ExerciseCard({
           resizeMode="cover"
           alt="Image do exercício"
           source={{
-            uri: "https://supertreino.com/wp-content/uploads/2018/08/photo-1517963879433-6ad2b056d712.jpg",
+            uri: `${api.defaults.baseURL}/exercise/thumb/${data.thumb}`,
           }}
           rounded="md"
           mr={4}
         />
         <VStack flex={1}>
           <Heading fontSize="lg" color="white">
-            Levantamento Terra
+            {data.name}
           </Heading>
           <Text fontSize="sm" color="gray.200" mt={1} numberOfLines={2}>
-            3 séries x 12 repetições
+            {data.series} séries x {data.repetitions} repetições
           </Text>
         </VStack>
         <Icon as={Entypo} name="chevron-thin-right" color="gray.300" />
