@@ -3,6 +3,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FlatList, HStack, Heading, Text, VStack, useToast } from "native-base";
 
 import { Group } from "@components/Group";
+import { Loading } from "@components/Loading";
 import { HomeHeader } from "@components/HomeHeader";
 import { ExerciseCard } from "@components/ExerciseCard";
 
@@ -10,14 +11,13 @@ import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
 import { ExerciseDto } from "@dtos/exercise.dto";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
-import { Loading } from "@components/Loading";
 
 export function Home() {
   const toast = useToast();
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const [groups, setGroups] = useState<string[]>([]);
-  const [groupSelected, setGroupSelected] = useState("Antebraço");
+  const [groupSelected, setGroupSelected] = useState("antebraço");
   const [exercises, setExercises] = useState<ExerciseDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

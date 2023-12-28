@@ -2,6 +2,7 @@ import { TouchableOpacity } from "react-native";
 import { HStack, Heading, Text, VStack, Icon } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { api } from "@services/api";
 import { UserPhoto } from "./UserPhoto";
 import { useAuthContext } from "@contexts/auth/AuthContext";
 
@@ -16,7 +17,11 @@ export function HomeHeader() {
         mr={4}
         size={16}
         alt="Foto do usuário"
-        source={user.avatar ? { uri: user.avatar } : UserAvatarDefault}
+        source={
+          user.avatar
+            ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+            : UserAvatarDefault
+        }
       />
       <VStack flex={1}>
         <Text color="gray.100" fontSize="md">

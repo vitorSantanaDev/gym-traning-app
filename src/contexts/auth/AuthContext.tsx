@@ -102,13 +102,28 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function updateUserProfile(userUpdated: UserDTO) {
+    try {
+      setUserState(userUpdated);
+      await saveUserOnStorage(userUpdated);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   useEffect(() => {
     loadUserFromStorage();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user: userState, signIn, signOut, loadingUserStorageData }}
+      value={{
+        user: userState,
+        signIn,
+        signOut,
+        loadingUserStorageData,
+        updateUserProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

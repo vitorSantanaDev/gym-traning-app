@@ -15,4 +15,5 @@ export type AuthContextStateType = {
     email: string;
     password: string;
   }): Promise<void>;
+  updateUserProfile(userUpdated: UserDTO): Promise<void>;
 };
